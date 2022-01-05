@@ -2,6 +2,11 @@ import torch
 from torch.autograd import Variable
 import data_pro
 import make_model
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 def fit_model(device):
@@ -36,7 +41,7 @@ def fit_model(device):
 
             count += 1
 
-            if not (count % 50):
+            if not (count % 50):  # train 중간마다 성능 평가를 위해서 test 실행
                 total = 0
                 correct = 0
                 for image, label in test_loader:
@@ -58,5 +63,19 @@ def fit_model(device):
                 iteration_list.append(count)
                 accuracy_list.append(accuracy)
 
-            if not (count % 500):
+            if not (count % 500):  # 중간중간 성능 출력
                 print("Iteration: {}, Loss: {}, Accuracy: {}%".format(count, loss.data, accuracy))
+
+    plt.plot(torch.Tensor(iteration_list).cpu().numpy(), torch.Tensor(loss_list).cpu().numpy())
+    plt.xlabel("No. of Iteration")
+    plt.ylabel("Loss")
+    plt.title("Iterations vs Loss")
+    plt.show()
+    plt.savefig('fig1.png')
+
+    plt.plot(torch.Tensor(iteration_list).cpu().numpy(), torch.Tensor(accuracy_list).cpu().numpy())
+    plt.xlabel("No. of Iteration")
+    plt.ylabel("Accuracy")
+    plt.title("Iterations vs Accuracy")
+    plt.show()
+    plt.savefig('fig2.png')

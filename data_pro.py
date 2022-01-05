@@ -4,6 +4,9 @@ import torchvision.transforms as transforms
 from torch.utils.data import Dataset
 import pandas as pd
 import numpy as np
+import os
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 class FashionDataset(Dataset):
@@ -42,10 +45,16 @@ def get_data():
 
     trans = transforms.Compose([transforms.ToTensor()])
 
-    train_set = torchvision.datasets.FashionMNIST("./data", download=True, transform=trans)
+    train_set = torchvision.datasets.FashionMNIST("./data", download=True, transform=trans)  # 제공해주는 데이터 다운
     test_set = torchvision.datasets.FashionMNIST("./data", download=True, train=False, transform=trans)
 
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=100)
+    train_loader = torch.utils.data.DataLoader(train_set, batch_size=100)  # 데이터 로더를 통해서 배치사이즈를 100으로
     test_loader = torch.utils.data.DataLoader(test_set, batch_size=100)
 
     return train_loader, test_loader
+
+
+if __name__ == "__main__":
+    train, test = get_data()
+
+    print(train)
